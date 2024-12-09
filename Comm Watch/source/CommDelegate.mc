@@ -4,6 +4,8 @@ using Toybox.Communications;
 using Toybox.Sensor;
 using Toybox.Timer;
 using Toybox.ActivityMonitor;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 // Classe per inviare dati continuamente
 class ContinuousDataSender {
@@ -16,44 +18,53 @@ class ContinuousDataSender {
     }
 
     // Metodo che invia i dati al telefono
-    function sendData() as Void {
-        var sensor = Sensor.getInfo();
-        var activityMonitor = ActivityMonitor.getInfo();
-        var listener = new CommListener();
+function sendData() as Void {
+    var sensor = Sensor.getInfo();
+    var activityMonitor = ActivityMonitor.getInfo();
+    var listener = new CommListener();
+    var dataToSend = ""; // Buffer per i dati da inviare
 
-        var dataToSend = ""; // Buffer per i dati da inviare
+    // Ottieni il momento corrente
+    var currentMoment = Time.now();
 
-        // Controlla se i dati sulla frequenza cardiaca sono disponibili
-        if (sensor.heartRate != null) {
-            var rate = sensor.heartRate.toString();
-            dataToSend += "Heart Rate: " + rate + "\n";
-        } else {
-            System.println("Heart Rate data not available.");
-        }
+    // Estrai le informazioni gregoriane
+    var dateTimeInfo = Gregorian.info(currentMoment, Time.FORMAT_LONG);
 
-        // Controlla se i dati stress sono disponibili
-        if (activityMonitor.stressScore != null) {
-            var stress = activityMonitor.stressScore.toString();
-            dataToSend += "Stress Rate: " + stress + "\n";
-        } else {
-            System.println("Stress data not available.");
-        }
+    // Formatta data e ora
+    var timestamp = dateTimeInfo.month + "/" + dateTimeInfo.day + "/" + dateTimeInfo.year + " " + dateTimeInfo.hour;
 
-        // Controlla se i dati sui passi sono disponibili
-        if (activityMonitor.steps != null) {
-            var steps = activityMonitor.steps.toString();
-            dataToSend += "Steps: " + steps + "\n";
-        } else {
-            System.println("Steps data not available.");
-        }
-
-        // Invia i dati raccolti, se presenti
-        if (dataToSend != "") {
-            Communications.transmit(dataToSend, null, listener);
-        } else {
-            System.println("No data available to send.");
-        }
+    // Controlla se i dati sulla frequenza cardiaca sono disponibili
+    if (sensor.heartRate != null) {
+        var rate = sensor.heartRate.toString();
+        dataToSend += timestamp + " - Heart Rate: " + rate + "\n";
+    } else {
+        System.println("Heart Rate data not available.");
     }
+
+    // Controlla se i dati sullo stress sono disponibili
+    if (activityMonitor.stressScore != null) {
+        var stress = activityMonitor.stressScore.toString();
+        dataToSend += timestamp + " - Stress Score: " + stress + "\n";
+    } else {
+        System.println("Stress data not available.");
+    }
+
+    // Controlla se i dati sui passi sono disponibili
+    if (activityMonitor.steps != null) {
+        var steps = activityMonitor.steps.toString();
+        dataToSend += timestamp + " - Steps: " + steps + "\n";
+    } else {
+        System.println("Steps data not available.");
+    }
+
+    // Invia i dati raccolti, se presenti
+    if (dataToSend != "") {
+        Communications.transmit(dataToSend, null, listener);
+    } else {
+        System.println("No data available to send.");
+    }
+}
+
 
 }
 
