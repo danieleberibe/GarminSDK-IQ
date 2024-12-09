@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.garmin.android.apps.connectiq.sample.comm.MessageFactory
 import com.garmin.android.apps.connectiq.sample.comm.R
+import com.garmin.android.apps.connectiq.sample.comm.adapter.EventAdapter
 import com.garmin.android.apps.connectiq.sample.comm.adapter.MessagesAdapter
 import com.garmin.android.connectiq.ConnectIQ
 import com.garmin.android.connectiq.IQApp
@@ -49,6 +50,10 @@ class DeviceActivity : Activity() {
     private lateinit var device: IQDevice
     private lateinit var myApp: IQApp
 
+    private lateinit var recyclerView: RecyclerView
+    private val eventsList = mutableListOf<String>()
+    private lateinit var adapter: EventAdapter
+
     private var appIsOpen = false
     private val openAppListener = ConnectIQ.IQOpenApplicationListener { _, _, status ->
         Toast.makeText(applicationContext, "App Status: " + status.name, Toast.LENGTH_SHORT).show()
@@ -79,7 +84,15 @@ class DeviceActivity : Activity() {
         deviceStatusView?.text = device.status?.name
         openAppButtonView?.setOnClickListener { openMyApp() }
         openAppStoreView?.setOnClickListener { openStore() }
+
+        recyclerView = findViewById(R.id.eventsRecyclerView)
+        adapter = EventAdapter(eventsList)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        listenByMyAppEvents()
     }
+
 
     public override fun onResume() {
         super.onResume()
@@ -148,30 +161,24 @@ class DeviceActivity : Activity() {
     private fun listenByMyAppEvents() {
         try {
             connectIQ.registerForAppEvents(device, myApp) { _, _, message, _ ->
-                // We know from our Comm sample widget that it will only ever send us strings, but in case
-                // we get something else, we are simply going to do a toString() on each object in the
-                // message list.
-                val builder = StringBuilder()
-                if (message.size > 0) {
+                if (message.isNotEmpty()) {
                     for (o in message) {
-                        builder.append(o.toString())
-                        builder.append("\r\n")
+                        eventsList.add(o.toString())
                     }
                 } else {
-                    builder.append("Received an empty message from the application")
+                    eventsList.add("Received an empty message from the application")
                 }
 
-                AlertDialog.Builder(this@DeviceActivity)
-                    .setTitle(R.string.received_message)
-                    .setMessage(builder.toString())
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create()
-                    .show()
+                // Aggiorna la RecyclerView
+                runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
             }
         } catch (e: InvalidStateException) {
             Toast.makeText(this, "ConnectIQ is not in a valid state", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     // Let's check the status of our application on the device.
     private fun getMyAppStatus() {
