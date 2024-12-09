@@ -1,0 +1,302 @@
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 7; ]
+using Toybox.Application;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 8; ]
+using Toybox.Communications;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 9; ]
+using Toybox.WatchUi;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 10; ]
+using Toybox.System;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 12; @position = 4; ]
+var page = 0;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 13; @position = 4; ]
+var strings;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 14; @position = 4; ]
+var stringsSize = 5;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 15; @position = 4; ]
+var mailMethod;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 16; @position = 4; ]
+var phoneMethod;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 17; @position = 4; ]
+var crashOnMessage = false;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 18; @position = 4; ]
+var hasDirectMessagingSupport = true;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 20; ]
+class CommExample extends Application.AppBase{
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 20; ]
+    <init> {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 20; ]
+    static
+    <init> {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 22; ]
+    function initialize() as Void {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_22_26_34_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 23 8 ]
+        %tmp.1 = getm $.Toybox.Application;
+        %tmp.2 = getv %tmp.1 :AppBase;
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 25 8 ]
+        %tmp.4 = self;
+        %tmp.5 = getv function %tmp.4 :method;
+        %tmp.7 = const :onMail;
+        %tmp.8 = invoke %tmp.4 %tmp.5(%tmp.7);
+        putv self :mailMethod %tmp.8;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 26 8 ]
+        %tmp.9 = self;
+        %tmp.10 = getv function %tmp.9 :method;
+        %tmp.12 = const :onPhone;
+        %tmp.13 = invoke %tmp.9 %tmp.10(%tmp.12);
+        putv self :phoneMethod %tmp.13;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 27 8 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_stmt:
+        %tmp.15 = getm $.Toybox.Communications;
+        %tmp.17 = const :registerForPhoneAppMessages;
+        %tmp.18 = canhazplz %tmp.15 %tmp.17;
+        bf %tmp.18 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_60_29_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 28 12 ]
+        %tmp.19 = getm $.Toybox.Communications;
+        %tmp.20 = getv function %tmp.19 :registerForPhoneAppMessages;
+        %tmp.22 = getv ? :phoneMethod;
+        invoke %tmp.19 %tmp.20(%tmp.22);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_60_29_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_false:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 29 15 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_stmt:
+        %tmp.24 = getm $.Toybox.Communications;
+        %tmp.25 = as %tmp.24 { (!interface { var registerForPhoneAppMessages; }) };
+        %tmp.27 = const :setMailboxListener;
+        %tmp.28 = canhazplz %tmp.25 %tmp.27;
+        bf %tmp.28 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_58_31_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 30 12 ]
+        %tmp.29 = getm $.Toybox.Communications;
+        %tmp.30 = getv function %tmp.29 :setMailboxListener;
+        %tmp.32 = getv ? :mailMethod;
+        invoke %tmp.29 %tmp.30(%tmp.32);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_58_31_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_false:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_31_15_33_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 32 12 ]
+        %tmp.33 = false;
+        putv self :hasDirectMessagingSupport %tmp.33;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_31_15_33_8_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_29_15_33_8_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_27_8_33_8_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_22_26_34_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 37; ]
+    function onStart(state) {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 41; ]
+    function onStop(state) {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 45; ]
+    function getInitialView() {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_45_30_47_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 46 8 ]
+        %tmp.1 = newa 2;
+        %tmp.5 = getv ? :CommView;
+        %tmp.2 = newc %tmp.5 ();
+        %tmp.6 = dup %tmp.1;
+        %tmp.7 = aputv %tmp.6 0 %tmp.2;
+        %tmp.11 = getv ? :CommInputDelegate;
+        %tmp.8 = newc %tmp.11 ();
+        %tmp.12 = dup %tmp.7;
+        %tmp.13 = aputv %tmp.12 1 %tmp.8;
+        ret %tmp.13;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_45_30_47_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 49; ]
+    function onMail(mailIter) {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_49_30_66_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 50 8 ]
+        [ "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_49_30_66_4_start" "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_49_30_66_4_stop" ]
+        %mail.1 = local;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 52 8 ]
+        %tmp.1 = lgetv %mailIter;
+        %tmp.2 = getv function %tmp.1 :next;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        lputv %mail.1 %tmp.3;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 54 8 ]
+        while @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_test @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_test:
+        %tmp.5 = lgetv %mail.1;
+        %tmp.6 = null;
+        %tmp.7 = ne %tmp.5 %tmp.6;
+        bf %tmp.7 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_begin:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_28_62_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 55 12 ]
+        [ "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_28_62_8_start" "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_28_62_8_stop" ]
+        %i.2 = local;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 56 12 ]
+        for @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_test @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_incr @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_init:
+        %tmp.9 = getv ? :stringsSize;
+        %tmp.10 = 1;
+        %tmp.11 = sub %tmp.9 %tmp.10;
+        lputv %i.2 %tmp.11;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_test:
+        %tmp.13 = lgetv %i.2;
+        %tmp.14 = 0;
+        %tmp.15 = gt %tmp.13 %tmp.14;
+        bf %tmp.15 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_begin:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_54_58_12_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 57 16 ]
+        %tmp.16 = getv self :strings;
+        %tmp.18 = getv ? :strings;
+        %tmp.20 = lgetv %i.2;
+        %tmp.21 = 1;
+        %tmp.22 = sub %tmp.20 %tmp.21;
+        %tmp.23 = agetv %tmp.18 %tmp.22;
+        %tmp.25 = lgetv %i.2;
+        aputv %tmp.16 %tmp.25 %tmp.23;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_54_58_12_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_incr:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 56 ]
+        %tmp.26 = lgetv %i.2;
+        %tmp.27 = 1;
+        %tmp.28 = sub %tmp.26 %tmp.27;
+        lputv %i.2 %tmp.28;
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_test;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_56_12_58_12_for_end:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 59 12 ]
+        %tmp.29 = getv self :strings;
+        %tmp.30 = lgetv %mail.1;
+        %tmp.31 = as %tmp.30 { (!Null) };
+        %tmp.32 = getv function %tmp.31 :toString;
+        %tmp.33 = invoke %tmp.31 %tmp.32();
+        %tmp.34 = 0;
+        aputv %tmp.29 %tmp.34 %tmp.33;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 60 12 ]
+        %tmp.35 = 1;
+        putv self :page %tmp.35;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 61 12 ]
+        %tmp.36 = lgetv %mailIter;
+        %tmp.37 = getv function %tmp.36 :next;
+        %tmp.38 = invoke %tmp.36 %tmp.37();
+        lputv %mail.1 %tmp.38;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_28_62_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_test;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_54_8_62_8_while_end:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 64 8 ]
+        %tmp.39 = getm $.Toybox.Communications;
+        %tmp.40 = getv function %tmp.39 :emptyMailbox;
+        invoke %tmp.39 %tmp.40();
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 65 8 ]
+        %tmp.41 = getm $.Toybox.WatchUi;
+        %tmp.42 = getv function %tmp.41 :requestUpdate;
+        invoke %tmp.41 %tmp.42();
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_49_30_66_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 68; ]
+    function onPhone(msg) {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_68_26_82_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 69 8 ]
+        [ "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_68_26_82_4_start" "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_68_26_82_4_stop" ]
+        %i.1 = local;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 71 8 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_stmt:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_11_71_59_begin:
+        %tmp.2 = getv ? :crashOnMessage;
+        %tmp.3 = true;
+        %tmp.4 = eq %tmp.2 %tmp.3;
+        bf %tmp.4 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_39_71_59_true:
+        %tmp.5 = lgetv %msg;
+        %tmp.6 = getv %tmp.5 :data;
+        %tmp.7 = getv function %tmp.6 :equals;
+        %tmp.8 = "Hi";
+        %tmp.9 = invoke %tmp.6 %tmp.7(%tmp.8);
+        push %tmp.9;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_39_71_59_end:
+        %tmp.10 = phi [%tmp.4 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_11_71_59_begin] [%tmp.9 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_39_71_59_true] [%tmp.10 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_39_71_59_end];
+        bf %tmp.10 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_62_73_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 72 12 ]
+        %tmp.11 = lgetv %msg;
+        %tmp.12 = getv function %tmp.11 :length;
+        invoke %tmp.11 %tmp.12();
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_62_73_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_71_8_73_8_if_end:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 75 8 ]
+        for @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_test @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_incr @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_init:
+        %tmp.14 = getv ? :stringsSize;
+        %tmp.15 = 1;
+        %tmp.16 = sub %tmp.14 %tmp.15;
+        lputv %i.1 %tmp.16;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_test:
+        %tmp.18 = lgetv %i.1;
+        %tmp.19 = 0;
+        %tmp.20 = gt %tmp.18 %tmp.19;
+        bf %tmp.20 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_begin:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_50_77_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 76 12 ]
+        %tmp.21 = getv self :strings;
+        %tmp.23 = getv ? :strings;
+        %tmp.25 = lgetv %i.1;
+        %tmp.26 = 1;
+        %tmp.27 = sub %tmp.25 %tmp.26;
+        %tmp.28 = agetv %tmp.23 %tmp.27;
+        %tmp.30 = lgetv %i.1;
+        aputv %tmp.21 %tmp.30 %tmp.28;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_50_77_8_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_incr:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 75 ]
+        %tmp.31 = lgetv %i.1;
+        %tmp.32 = 1;
+        %tmp.33 = sub %tmp.31 %tmp.32;
+        lputv %i.1 %tmp.33;
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_test;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_75_8_77_8_for_end:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 78 8 ]
+        %tmp.34 = getv self :strings;
+        %tmp.35 = lgetv %msg;
+        %tmp.36 = getv %tmp.35 :data;
+        %tmp.37 = getv function %tmp.36 :toString;
+        %tmp.38 = invoke %tmp.36 %tmp.37();
+        %tmp.39 = 0;
+        aputv %tmp.34 %tmp.39 %tmp.38;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 79 8 ]
+        %tmp.40 = 1;
+        putv self :page %tmp.40;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 81 8 ]
+        %tmp.41 = getm $.Toybox.WatchUi;
+        %tmp.42 = getv function %tmp.41 :requestUpdate;
+        invoke %tmp.41 %tmp.42();
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommApp_mc_68_26_82_4_stop:
+    }
+}
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc"; @line = 7; ]
+<init> {
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommApp.mc" 13 4 ]
+    %tmp.43 = newa 5;
+    %tmp.44 = "";
+    %tmp.45 = dup %tmp.43;
+    %tmp.46 = aputv %tmp.45 0 %tmp.44;
+    %tmp.47 = "";
+    %tmp.48 = dup %tmp.46;
+    %tmp.49 = aputv %tmp.48 1 %tmp.47;
+    %tmp.50 = "";
+    %tmp.51 = dup %tmp.49;
+    %tmp.52 = aputv %tmp.51 2 %tmp.50;
+    %tmp.53 = "";
+    %tmp.54 = dup %tmp.52;
+    %tmp.55 = aputv %tmp.54 3 %tmp.53;
+    %tmp.56 = "";
+    %tmp.57 = dup %tmp.55;
+    %tmp.58 = aputv %tmp.57 4 %tmp.56;
+    putv self :strings %tmp.58;
+}

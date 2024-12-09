@@ -1,0 +1,478 @@
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 7; ]
+using Toybox.WatchUi;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 8; ]
+using Toybox.Graphics;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 9; ]
+using Toybox.Communications;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 10; ]
+using Toybox.System;
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 12; ]
+class CommView extends WatchUi.View{
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 12; ]
+    <init> {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 12; ]
+    static
+    <init> {
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 13; @position = 8; ]
+    var screenShape;
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 15; ]
+    function initialize() as Void {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_15_26_17_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 16 8 ]
+        %tmp.2 = getv ? :View;
+        %tmp.3 = getv function %tmp.2 :initialize;
+        invoke %tmp.2 %tmp.3();
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_15_26_17_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 19; ]
+    function onLayout(dc) {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_19_26_21_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 20 8 ]
+        %tmp.1 = getm $.Toybox.System;
+        %tmp.2 = getv function %tmp.1 :getDeviceSettings;
+        %tmp.3 = invoke %tmp.1 %tmp.2();
+        %tmp.4 = getv %tmp.3 :screenShape;
+        putv self :screenShape %tmp.4;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_19_26_21_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 23; ]
+    function drawIntroPage(dc) {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_23_31_48_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 24 8 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_stmt:
+        %tmp.1 = getm $.Toybox.System;
+        %tmp.2 = getv %tmp.1 :SCREEN_SHAPE_ROUND;
+        %tmp.4 = getv ? :screenShape;
+        %tmp.5 = eq %tmp.2 %tmp.4;
+        bf %tmp.5 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_53_30_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 25 12 ]
+        %tmp.6 = lgetv %dc;
+        %tmp.7 = getv function %tmp.6 :drawText;
+        %tmp.8 = lgetv %dc;
+        %tmp.9 = getv function %tmp.8 :getWidth;
+        %tmp.10 = invoke %tmp.8 %tmp.9();
+        %tmp.11 = 2;
+        %tmp.12 = div %tmp.10 %tmp.11;
+        %tmp.13 = 25;
+        %tmp.14 = getm $.Toybox.Graphics;
+        %tmp.15 = getv %tmp.14 :FONT_SMALL;
+        %tmp.16 = "Communications";
+        %tmp.17 = getm $.Toybox.Graphics;
+        %tmp.18 = getv %tmp.17 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.6 %tmp.7(%tmp.12, %tmp.13, %tmp.15, %tmp.16, %tmp.18);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 26 12 ]
+        %tmp.19 = lgetv %dc;
+        %tmp.20 = getv function %tmp.19 :drawText;
+        %tmp.21 = lgetv %dc;
+        %tmp.22 = getv function %tmp.21 :getWidth;
+        %tmp.23 = invoke %tmp.21 %tmp.22();
+        %tmp.24 = 2;
+        %tmp.25 = div %tmp.23 %tmp.24;
+        %tmp.26 = 55;
+        %tmp.27 = getm $.Toybox.Graphics;
+        %tmp.28 = getv %tmp.27 :FONT_SMALL;
+        %tmp.29 = "Test";
+        %tmp.30 = getm $.Toybox.Graphics;
+        %tmp.31 = getv %tmp.30 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.19 %tmp.20(%tmp.25, %tmp.26, %tmp.28, %tmp.29, %tmp.31);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 27 12 ]
+        %tmp.32 = lgetv %dc;
+        %tmp.33 = getv function %tmp.32 :drawText;
+        %tmp.34 = lgetv %dc;
+        %tmp.35 = getv function %tmp.34 :getWidth;
+        %tmp.36 = invoke %tmp.34 %tmp.35();
+        %tmp.37 = 2;
+        %tmp.38 = div %tmp.36 %tmp.37;
+        %tmp.39 = 80;
+        %tmp.40 = getm $.Toybox.Graphics;
+        %tmp.41 = getv %tmp.40 :FONT_TINY;
+        %tmp.42 = "Connect a phone then";
+        %tmp.43 = getm $.Toybox.Graphics;
+        %tmp.44 = getv %tmp.43 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.32 %tmp.33(%tmp.38, %tmp.39, %tmp.41, %tmp.42, %tmp.44);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 28 12 ]
+        %tmp.45 = lgetv %dc;
+        %tmp.46 = getv function %tmp.45 :drawText;
+        %tmp.47 = lgetv %dc;
+        %tmp.48 = getv function %tmp.47 :getWidth;
+        %tmp.49 = invoke %tmp.47 %tmp.48();
+        %tmp.50 = 2;
+        %tmp.51 = div %tmp.49 %tmp.50;
+        %tmp.52 = 100;
+        %tmp.53 = getm $.Toybox.Graphics;
+        %tmp.54 = getv %tmp.53 :FONT_TINY;
+        %tmp.55 = "use the menu to send";
+        %tmp.56 = getm $.Toybox.Graphics;
+        %tmp.57 = getv %tmp.56 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.45 %tmp.46(%tmp.51, %tmp.52, %tmp.54, %tmp.55, %tmp.57);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 29 12 ]
+        %tmp.58 = lgetv %dc;
+        %tmp.59 = getv function %tmp.58 :drawText;
+        %tmp.60 = lgetv %dc;
+        %tmp.61 = getv function %tmp.60 :getWidth;
+        %tmp.62 = invoke %tmp.60 %tmp.61();
+        %tmp.63 = 2;
+        %tmp.64 = div %tmp.62 %tmp.63;
+        %tmp.65 = 120;
+        %tmp.66 = getm $.Toybox.Graphics;
+        %tmp.67 = getv %tmp.66 :FONT_TINY;
+        %tmp.68 = "strings to your phone";
+        %tmp.69 = getm $.Toybox.Graphics;
+        %tmp.70 = getv %tmp.69 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.58 %tmp.59(%tmp.64, %tmp.65, %tmp.67, %tmp.68, %tmp.70);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_53_30_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_false:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 30 15 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_stmt:
+        %tmp.71 = getm $.Toybox.System;
+        %tmp.72 = getv %tmp.71 :SCREEN_SHAPE_SEMI_ROUND;
+        %tmp.74 = getv ? :screenShape;
+        %tmp.75 = eq %tmp.72 %tmp.74;
+        bf %tmp.75 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_65_35_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 31 12 ]
+        %tmp.76 = lgetv %dc;
+        %tmp.77 = getv function %tmp.76 :drawText;
+        %tmp.78 = lgetv %dc;
+        %tmp.79 = getv function %tmp.78 :getWidth;
+        %tmp.80 = invoke %tmp.78 %tmp.79();
+        %tmp.81 = 2;
+        %tmp.82 = div %tmp.80 %tmp.81;
+        %tmp.83 = 20;
+        %tmp.84 = getm $.Toybox.Graphics;
+        %tmp.85 = getv %tmp.84 :FONT_MEDIUM;
+        %tmp.86 = "Communications test";
+        %tmp.87 = getm $.Toybox.Graphics;
+        %tmp.88 = getv %tmp.87 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.76 %tmp.77(%tmp.82, %tmp.83, %tmp.85, %tmp.86, %tmp.88);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 32 12 ]
+        %tmp.89 = lgetv %dc;
+        %tmp.90 = getv function %tmp.89 :drawText;
+        %tmp.91 = lgetv %dc;
+        %tmp.92 = getv function %tmp.91 :getWidth;
+        %tmp.93 = invoke %tmp.91 %tmp.92();
+        %tmp.94 = 2;
+        %tmp.95 = div %tmp.93 %tmp.94;
+        %tmp.96 = 50;
+        %tmp.97 = getm $.Toybox.Graphics;
+        %tmp.98 = getv %tmp.97 :FONT_SMALL;
+        %tmp.99 = "Connect a phone";
+        %tmp.100 = getm $.Toybox.Graphics;
+        %tmp.101 = getv %tmp.100 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.89 %tmp.90(%tmp.95, %tmp.96, %tmp.98, %tmp.99, %tmp.101);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 33 12 ]
+        %tmp.102 = lgetv %dc;
+        %tmp.103 = getv function %tmp.102 :drawText;
+        %tmp.104 = lgetv %dc;
+        %tmp.105 = getv function %tmp.104 :getWidth;
+        %tmp.106 = invoke %tmp.104 %tmp.105();
+        %tmp.107 = 2;
+        %tmp.108 = div %tmp.106 %tmp.107;
+        %tmp.109 = 70;
+        %tmp.110 = getm $.Toybox.Graphics;
+        %tmp.111 = getv %tmp.110 :FONT_SMALL;
+        %tmp.112 = "Then use the menu to send";
+        %tmp.113 = getm $.Toybox.Graphics;
+        %tmp.114 = getv %tmp.113 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.102 %tmp.103(%tmp.108, %tmp.109, %tmp.111, %tmp.112, %tmp.114);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 34 12 ]
+        %tmp.115 = lgetv %dc;
+        %tmp.116 = getv function %tmp.115 :drawText;
+        %tmp.117 = lgetv %dc;
+        %tmp.118 = getv function %tmp.117 :getWidth;
+        %tmp.119 = invoke %tmp.117 %tmp.118();
+        %tmp.120 = 2;
+        %tmp.121 = div %tmp.119 %tmp.120;
+        %tmp.122 = 90;
+        %tmp.123 = getm $.Toybox.Graphics;
+        %tmp.124 = getv %tmp.123 :FONT_SMALL;
+        %tmp.125 = "strings to your phone";
+        %tmp.126 = getm $.Toybox.Graphics;
+        %tmp.127 = getv %tmp.126 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.115 %tmp.116(%tmp.121, %tmp.122, %tmp.124, %tmp.125, %tmp.127);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_65_35_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_false:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 35 15 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_stmt:
+        %tmp.128 = lgetv %dc;
+        %tmp.129 = getv function %tmp.128 :getWidth;
+        %tmp.130 = invoke %tmp.128 %tmp.129();
+        %tmp.131 = lgetv %dc;
+        %tmp.132 = getv function %tmp.131 :getHeight;
+        %tmp.133 = invoke %tmp.131 %tmp.132();
+        %tmp.134 = gt %tmp.130 %tmp.133;
+        bf %tmp.134 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_50_40_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 36 12 ]
+        %tmp.135 = lgetv %dc;
+        %tmp.136 = getv function %tmp.135 :drawText;
+        %tmp.137 = 10;
+        %tmp.138 = 20;
+        %tmp.139 = getm $.Toybox.Graphics;
+        %tmp.140 = getv %tmp.139 :FONT_MEDIUM;
+        %tmp.141 = "Communications test";
+        %tmp.142 = getm $.Toybox.Graphics;
+        %tmp.143 = getv %tmp.142 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.135 %tmp.136(%tmp.137, %tmp.138, %tmp.140, %tmp.141, %tmp.143);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 37 12 ]
+        %tmp.144 = lgetv %dc;
+        %tmp.145 = getv function %tmp.144 :drawText;
+        %tmp.146 = 10;
+        %tmp.147 = 50;
+        %tmp.148 = getm $.Toybox.Graphics;
+        %tmp.149 = getv %tmp.148 :FONT_SMALL;
+        %tmp.150 = "Connect a phone";
+        %tmp.151 = getm $.Toybox.Graphics;
+        %tmp.152 = getv %tmp.151 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.144 %tmp.145(%tmp.146, %tmp.147, %tmp.149, %tmp.150, %tmp.152);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 38 12 ]
+        %tmp.153 = lgetv %dc;
+        %tmp.154 = getv function %tmp.153 :drawText;
+        %tmp.155 = 10;
+        %tmp.156 = 70;
+        %tmp.157 = getm $.Toybox.Graphics;
+        %tmp.158 = getv %tmp.157 :FONT_SMALL;
+        %tmp.159 = "Then use the menu to send";
+        %tmp.160 = getm $.Toybox.Graphics;
+        %tmp.161 = getv %tmp.160 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.153 %tmp.154(%tmp.155, %tmp.156, %tmp.158, %tmp.159, %tmp.161);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 39 12 ]
+        %tmp.162 = lgetv %dc;
+        %tmp.163 = getv function %tmp.162 :drawText;
+        %tmp.164 = 10;
+        %tmp.165 = 90;
+        %tmp.166 = getm $.Toybox.Graphics;
+        %tmp.167 = getv %tmp.166 :FONT_SMALL;
+        %tmp.168 = "strings to your phone";
+        %tmp.169 = getm $.Toybox.Graphics;
+        %tmp.170 = getv %tmp.169 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.162 %tmp.163(%tmp.164, %tmp.165, %tmp.167, %tmp.168, %tmp.170);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_50_40_8_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_false:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_40_15_47_8_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 41 12 ]
+        %tmp.171 = lgetv %dc;
+        %tmp.172 = getv function %tmp.171 :drawText;
+        %tmp.173 = 10;
+        %tmp.174 = 20;
+        %tmp.175 = getm $.Toybox.Graphics;
+        %tmp.176 = getv %tmp.175 :FONT_MEDIUM;
+        %tmp.177 = "Communications test";
+        %tmp.178 = getm $.Toybox.Graphics;
+        %tmp.179 = getv %tmp.178 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.171 %tmp.172(%tmp.173, %tmp.174, %tmp.176, %tmp.177, %tmp.179);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 42 12 ]
+        %tmp.180 = lgetv %dc;
+        %tmp.181 = getv function %tmp.180 :drawText;
+        %tmp.182 = 10;
+        %tmp.183 = 40;
+        %tmp.184 = getm $.Toybox.Graphics;
+        %tmp.185 = getv %tmp.184 :FONT_MEDIUM;
+        %tmp.186 = "Test";
+        %tmp.187 = getm $.Toybox.Graphics;
+        %tmp.188 = getv %tmp.187 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.180 %tmp.181(%tmp.182, %tmp.183, %tmp.185, %tmp.186, %tmp.188);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 43 12 ]
+        %tmp.189 = lgetv %dc;
+        %tmp.190 = getv function %tmp.189 :drawText;
+        %tmp.191 = 10;
+        %tmp.192 = 70;
+        %tmp.193 = getm $.Toybox.Graphics;
+        %tmp.194 = getv %tmp.193 :FONT_SMALL;
+        %tmp.195 = "Connect a phone";
+        %tmp.196 = getm $.Toybox.Graphics;
+        %tmp.197 = getv %tmp.196 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.189 %tmp.190(%tmp.191, %tmp.192, %tmp.194, %tmp.195, %tmp.197);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 44 12 ]
+        %tmp.198 = lgetv %dc;
+        %tmp.199 = getv function %tmp.198 :drawText;
+        %tmp.200 = 10;
+        %tmp.201 = 90;
+        %tmp.202 = getm $.Toybox.Graphics;
+        %tmp.203 = getv %tmp.202 :FONT_SMALL;
+        %tmp.204 = "Then use the menu";
+        %tmp.205 = getm $.Toybox.Graphics;
+        %tmp.206 = getv %tmp.205 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.198 %tmp.199(%tmp.200, %tmp.201, %tmp.203, %tmp.204, %tmp.206);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 45 12 ]
+        %tmp.207 = lgetv %dc;
+        %tmp.208 = getv function %tmp.207 :drawText;
+        %tmp.209 = 10;
+        %tmp.210 = 110;
+        %tmp.211 = getm $.Toybox.Graphics;
+        %tmp.212 = getv %tmp.211 :FONT_SMALL;
+        %tmp.213 = "to send strings";
+        %tmp.214 = getm $.Toybox.Graphics;
+        %tmp.215 = getv %tmp.214 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.207 %tmp.208(%tmp.209, %tmp.210, %tmp.212, %tmp.213, %tmp.215);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 46 12 ]
+        %tmp.216 = lgetv %dc;
+        %tmp.217 = getv function %tmp.216 :drawText;
+        %tmp.218 = 10;
+        %tmp.219 = 130;
+        %tmp.220 = getm $.Toybox.Graphics;
+        %tmp.221 = getv %tmp.220 :FONT_SMALL;
+        %tmp.222 = "to your phone";
+        %tmp.223 = getm $.Toybox.Graphics;
+        %tmp.224 = getv %tmp.223 :TEXT_JUSTIFY_LEFT;
+        invoke %tmp.216 %tmp.217(%tmp.218, %tmp.219, %tmp.221, %tmp.222, %tmp.224);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_40_15_47_8_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_35_15_47_8_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_30_15_47_8_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_24_8_47_8_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_23_31_48_4_stop:
+    }
+    [ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 50; ]
+    function onUpdate(dc) {
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_50_26_71_4_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 51 8 ]
+        %tmp.1 = lgetv %dc;
+        %tmp.2 = getv function %tmp.1 :setColor;
+        %tmp.3 = getm $.Toybox.Graphics;
+        %tmp.4 = getv %tmp.3 :COLOR_TRANSPARENT;
+        %tmp.5 = getm $.Toybox.Graphics;
+        %tmp.6 = getv %tmp.5 :COLOR_BLACK;
+        invoke %tmp.1 %tmp.2(%tmp.4, %tmp.6);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 52 8 ]
+        %tmp.7 = lgetv %dc;
+        %tmp.8 = getv function %tmp.7 :clear;
+        invoke %tmp.7 %tmp.8();
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 53 8 ]
+        %tmp.9 = lgetv %dc;
+        %tmp.10 = getv function %tmp.9 :setColor;
+        %tmp.11 = getm $.Toybox.Graphics;
+        %tmp.12 = getv %tmp.11 :COLOR_WHITE;
+        %tmp.13 = getm $.Toybox.Graphics;
+        %tmp.14 = getv %tmp.13 :COLOR_TRANSPARENT;
+        invoke %tmp.9 %tmp.10(%tmp.12, %tmp.14);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 55 8 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_stmt:
+        %tmp.16 = getv ? :hasDirectMessagingSupport;
+        bf %tmp.16 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_38_68_9_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 56 12 ]
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_stmt:
+        %tmp.18 = getv ? :page;
+        %tmp.19 = 0;
+        %tmp.20 = eq %tmp.18 %tmp.19;
+        bf %tmp.20 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_false;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_true:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_26_58_12_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 57 16 ]
+        %tmp.21 = self;
+        %tmp.22 = getv function %tmp.21 :drawIntroPage;
+        %tmp.24 = lgetv %dc;
+        invoke %tmp.21 %tmp.22(%tmp.24);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_26_58_12_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_false:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 59 16 ]
+        [ "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_start" "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_stop" ]
+        %i.1 = local;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 60 16 ]
+        [ "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_start" "C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_stop" ]
+        %y.2 = local;
+        %tmp.25 = 50;
+        lputv %y.2 %tmp.25;
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 62 16 ]
+        %tmp.26 = lgetv %dc;
+        %tmp.27 = getv function %tmp.26 :drawText;
+        %tmp.28 = lgetv %dc;
+        %tmp.29 = getv function %tmp.28 :getWidth;
+        %tmp.30 = invoke %tmp.28 %tmp.29();
+        %tmp.31 = 2;
+        %tmp.32 = div %tmp.30 %tmp.31;
+        %tmp.33 = 20;
+        %tmp.34 = getm $.Toybox.Graphics;
+        %tmp.35 = getv %tmp.34 :FONT_MEDIUM;
+        %tmp.36 = "Strings Received:";
+        %tmp.37 = getm $.Toybox.Graphics;
+        %tmp.38 = getv %tmp.37 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.26 %tmp.27(%tmp.32, %tmp.33, %tmp.35, %tmp.36, %tmp.38);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 63 16 ]
+        for @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_test @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_incr @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_init:
+        %tmp.39 = 0;
+        lputv %i.1 %tmp.39;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_test:
+        %tmp.41 = lgetv %i.1;
+        %tmp.43 = getv ? :stringsSize;
+        %tmp.44 = lt %tmp.41 %tmp.43;
+        bf %tmp.44 @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_begin:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_52_66_16_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 64 20 ]
+        %tmp.45 = lgetv %dc;
+        %tmp.46 = getv function %tmp.45 :drawText;
+        %tmp.47 = lgetv %dc;
+        %tmp.48 = getv function %tmp.47 :getWidth;
+        %tmp.49 = invoke %tmp.47 %tmp.48();
+        %tmp.50 = 2;
+        %tmp.51 = div %tmp.49 %tmp.50;
+        %tmp.53 = lgetv %y.2;
+        %tmp.54 = getm $.Toybox.Graphics;
+        %tmp.55 = getv %tmp.54 :FONT_SMALL;
+        %tmp.57 = getv ? :strings;
+        %tmp.59 = lgetv %i.1;
+        %tmp.60 = agetv %tmp.57 %tmp.59;
+        %tmp.61 = getm $.Toybox.Graphics;
+        %tmp.62 = getv %tmp.61 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.45 %tmp.46(%tmp.51, %tmp.53, %tmp.55, %tmp.60, %tmp.62);
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 65 20 ]
+        %tmp.63 = lgetv %y.2;
+        %tmp.64 = 20;
+        %tmp.65 = add %tmp.63 %tmp.64;
+        lputv %y.2 %tmp.65;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_52_66_16_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_incr:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 63 ]
+        %tmp.66 = lgetv %i.1;
+        %tmp.67 = 1;
+        %tmp.68 = add %tmp.66 %tmp.67;
+        lputv %i.1 %tmp.68;
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_test;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_63_16_66_16_for_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_58_19_67_13_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_56_12_67_13_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_38_68_9_stop:
+        goto @C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_end;
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_false:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_68_16_70_9_start:
+[ "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc" 69 13 ]
+        %tmp.69 = lgetv %dc;
+        %tmp.70 = getv function %tmp.69 :drawText;
+        %tmp.71 = lgetv %dc;
+        %tmp.72 = getv function %tmp.71 :getWidth;
+        %tmp.73 = invoke %tmp.71 %tmp.72();
+        %tmp.74 = 2;
+        %tmp.75 = div %tmp.73 %tmp.74;
+        %tmp.76 = lgetv %dc;
+        %tmp.77 = getv function %tmp.76 :getHeight;
+        %tmp.78 = invoke %tmp.76 %tmp.77();
+        %tmp.79 = 3;
+        %tmp.80 = div %tmp.78 %tmp.79;
+        %tmp.81 = getm $.Toybox.Graphics;
+        %tmp.82 = getv %tmp.81 :FONT_MEDIUM;
+        %tmp.83 = "Direct Messaging API\nNot Supported";
+        %tmp.84 = getm $.Toybox.Graphics;
+        %tmp.85 = getv %tmp.84 :TEXT_JUSTIFY_CENTER;
+        invoke %tmp.69 %tmp.70(%tmp.75, %tmp.80, %tmp.82, %tmp.83, %tmp.85);
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_68_16_70_9_stop:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_55_8_70_9_if_end:
+C_Users_danie_src_connectiq_android_sdk_Comm_Watch_source_CommView_mc_50_26_71_4_stop:
+    }
+}
+[ @file = "C:\Users\danie\src\connectiq-android-sdk\Comm Watch\source\CommView.mc"; @line = 7; ]
+<init> {
+}
