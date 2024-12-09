@@ -17,17 +17,44 @@ class ContinuousDataSender {
 
     // Metodo che invia i dati al telefono
     function sendData() as Void {
-            var activityMonitor = ActivityMonitor.getInfo();
-            var listener = new CommListener();
+        var sensor = Sensor.getInfo();
+        var activityMonitor = ActivityMonitor.getInfo();
+        var listener = new CommListener();
 
-            // Controlla se i dati sui passi sono disponibili
-            if (activityMonitor.steps != null) {
-                var steps = activityMonitor.steps.toString();
-                Communications.transmit("Steps: " + steps, null, listener);
-            } else {
-                System.println("Steps data not available.");
-            }
+        var dataToSend = ""; // Buffer per i dati da inviare
+
+        // Controlla se i dati sulla frequenza cardiaca sono disponibili
+        if (sensor.heartRate != null) {
+            var rate = sensor.heartRate.toString();
+            dataToSend += "Heart Rate: " + rate + "\n";
+        } else {
+            System.println("Heart Rate data not available.");
         }
+
+        // Controlla se i dati stress sono disponibili
+        if (activityMonitor.stressScore != null) {
+            var stress = activityMonitor.stressScore.toString();
+            dataToSend += "Stress Rate: " + stress + "\n";
+        } else {
+            System.println("Stress data not available.");
+        }
+
+        // Controlla se i dati sui passi sono disponibili
+        if (activityMonitor.steps != null) {
+            var steps = activityMonitor.steps.toString();
+            dataToSend += "Steps: " + steps + "\n";
+        } else {
+            System.println("Steps data not available.");
+        }
+
+        // Invia i dati raccolti, se presenti
+        if (dataToSend != "") {
+            Communications.transmit(dataToSend, null, listener);
+        } else {
+            System.println("No data available to send.");
+        }
+    }
+
 }
 
 // Listener per gestire il completamento della trasmissione
