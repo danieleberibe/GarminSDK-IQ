@@ -25,13 +25,10 @@ function sendData() as Void {
     var dataToSend = ""; // Buffer per i dati da inviare
 
     // Ottieni il momento corrente
-    var currentMoment = Time.now();
-
-    // Estrai le informazioni gregoriane
-    var dateTimeInfo = Gregorian.info(currentMoment, Time.FORMAT_LONG);
+    var currentMoment =  System.getClockTime();
 
     // Formatta data e ora
-    var timestamp = dateTimeInfo.month + "/" + dateTimeInfo.day + "/" + dateTimeInfo.year + " " + dateTimeInfo.hour;
+    var timestamp = currentMoment.hour.format("%02d") + ":" + currentMoment.min.format("%02d") + ":" + currentMoment.sec.format("%02d");
 
     // Controlla se i dati sulla frequenza cardiaca sono disponibili
     if (sensor.heartRate != null) {
