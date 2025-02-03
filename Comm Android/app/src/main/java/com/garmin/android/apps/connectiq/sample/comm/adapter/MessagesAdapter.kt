@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.garmin.android.apps.connectiq.sample.comm.Message
+import com.garmin.android.apps.connectiq.sample.comm.R
 
 class MessagesAdapter(
     private val onItemClickListener: (Any) -> Unit
@@ -19,7 +20,7 @@ class MessagesAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(android.R.layout.simple_list_item_1, parent, false)
+            .inflate(R.layout.item_data, parent, false)
         return MessageViewHolder(view, onItemClickListener)
     }
 
@@ -42,8 +43,25 @@ class MessageViewHolder(
     private val onItemClickListener: (Any) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
+    private val tvTimestamp: TextView = view.findViewById(R.id.tvTimestamp)
+    private val tvHeartRate: TextView = view.findViewById(R.id.tvHeartRate)
+    private val tvStress: TextView = view.findViewById(R.id.tvStress)
+    private val tvSteps: TextView = view.findViewById(R.id.tvSteps)
+
     fun bindTo(message: Message) {
-        view.findViewById<TextView>(android.R.id.text1).text = message.text
+        try {
+            val jsonObject = org.json.JSONObject(message.text)
+            tvTimestamp.text = "Time: " + jsonObject.getString("timestamp")
+            tvHeartRate.text = "Heart Rate: " + jsonObject.getString("heartRate")
+            tvStress.text = "Stress: " + jsonObject.getString("stressScore")
+            tvSteps.text = "Steps: " + jsonObject.getString("steps")
+        } catch (e: Exception) {
+            tvTimestamp.text = message.text
+            tvHeartRate.text = ""
+            tvStress.text = ""
+            tvSteps.text = ""
+        }
+
         view.setOnClickListener {
             onItemClickListener(message.payload)
         }
