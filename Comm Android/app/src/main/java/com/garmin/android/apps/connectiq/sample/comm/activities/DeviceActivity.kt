@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +26,9 @@ import com.garmin.android.connectiq.IQApp
 import com.garmin.android.connectiq.IQDevice
 import com.garmin.android.connectiq.exception.InvalidStateException
 import com.garmin.android.connectiq.exception.ServiceUnavailableException
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
 
 private const val TAG = "DeviceActivity"
 private const val EXTRA_IQ_DEVICE = "IQDevice"
@@ -67,13 +71,12 @@ class DeviceActivity : Activity() {
         }
     }
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device)
 
         device = intent.getParcelableExtra<Parcelable>(EXTRA_IQ_DEVICE) as IQDevice
         myApp = IQApp(COMM_WATCH_ID)
-        appIsOpen = false
 
         val deviceNameView = findViewById<TextView>(R.id.devicename)
         deviceStatusView = findViewById(R.id.devicestatus)
@@ -90,7 +93,37 @@ class DeviceActivity : Activity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        listenByMyAppEvents()
+        // ✅ CARICA I DATI SALVATI
+        loadSavedData()
+    }
+
+
+
+    private fun loadSavedData() {
+        val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
+        val jsonData = sharedPreferences.getString("data_list", "[]") ?: "[]"
+
+        Log.d(TAG, "📥 Dati letti da SharedPreferences: $jsonData")  // ✅ Controlliamo cosa leggiamo
+
+        val jsonArray = JSONArray(jsonData)
+        eventsList.clear()  // Pulisce la lista prima di aggiungere nuovi dati
+
+        for (i in 0 until jsonArray.length()) {
+            try {
+                val jsonObject = jsonArray.getJSONObject(i)
+                val time = jsonObject.opt("time")?.toString() ?: "N/A"
+                val steps = jsonObject.optInt("steps", -1)
+
+                eventsList.add("⏱ Ora: $time, 🚶 Steps: $steps")
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Errore nella lettura dei dati salvati", e)
+            }
+        }
+
+        // Aggiorna la UI
+        runOnUiThread {
+            adapter.notifyDataSetChanged()
+        }
     }
 
 
@@ -162,22 +195,24 @@ class DeviceActivity : Activity() {
         try {
             connectIQ.registerForAppEvents(device, myApp) { _, _, message, _ ->
                 if (message.isNotEmpty()) {
-                    for (o in message) {
-                        eventsList.add(o.toString())
+                    for (data in message) {
+                        eventsList.add(data.toString()) // Aggiorniamo la lista mostrata
+                        saveDataToFile(data.toString()) // Salviamo i dati su file
                     }
                 } else {
-                    eventsList.add("Received an empty message from the application")
+                    eventsList.add("Messaggio vuoto ricevuto.")
                 }
 
-                // Aggiorna la RecyclerView
+                // Aggiorniamo la UI con i nuovi dati
                 runOnUiThread {
                     adapter.notifyDataSetChanged()
                 }
             }
         } catch (e: InvalidStateException) {
-            Toast.makeText(this, "ConnectIQ is not in a valid state", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "ConnectIQ non è in uno stato valido", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
     // Let's check the status of our application on the device.
@@ -186,8 +221,11 @@ class DeviceActivity : Activity() {
             connectIQ.getApplicationInfo(COMM_WATCH_ID, device, object :
                 ConnectIQ.IQApplicationInfoListener {
                 override fun onApplicationInfoReceived(app: IQApp) {
-                    // This is a good thing. Now we can show our list of message options.
-                    buildMessageList()
+                    if (::recyclerView.isInitialized) {
+                        buildMessageList()
+                    } else {
+                        Log.e(TAG, "RecyclerView non inizializzata, impossibile aggiornare la lista!")
+                    }
                 }
 
                 override fun onApplicationNotInstalled(applicationId: String) {
@@ -209,11 +247,12 @@ class DeviceActivity : Activity() {
     private fun buildMessageList() {
         val adapter = MessagesAdapter { onItemClick(it) }
         adapter.submitList(MessageFactory.getMessages(this@DeviceActivity))
-        findViewById<RecyclerView>(android.R.id.list).apply {
-            layoutManager = LinearLayoutManager(this@DeviceActivity)
-            this.adapter = adapter
-        }
+
+        // Modifica per usare il corretto ID della RecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
     }
+
 
     private fun onItemClick(message: Any) {
         try {
@@ -229,5 +268,41 @@ class DeviceActivity : Activity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+    }
+
+    private fun saveDataToFile(data: String) {
+        try {
+            val fileName = "garmin_data.json"
+            val file = File(filesDir, fileName)
+
+            val jsonArray: JSONArray = if (file.exists()) {
+                JSONArray(file.readText()) // Se il file esiste, leggilo
+            } else {
+                JSONArray()
+            }
+
+            jsonArray.put(JSONObject(data)) // Aggiungi il nuovo dato
+            file.writeText(jsonArray.toString()) // Sovrascrivi il file con i nuovi dati
+
+            Log.d(TAG, "Dati salvati su $fileName")
+        } catch (e: Exception) {
+            Log.e(TAG, "Errore nel salvataggio dei dati", e)
+        }
+    }
+
+    private fun readDataFromSharedPreferences(): List<String> {
+        val dataList = mutableListOf<String>()
+        try {
+            val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
+            val jsonData = sharedPreferences.getString("data_list", "[]") ?: "[]"
+
+            val jsonArray = JSONArray(jsonData)
+            for (i in 0 until jsonArray.length()) {
+                dataList.add(jsonArray.getJSONObject(i).toString()) // Aggiungi ogni dato alla lista
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Errore nella lettura dei dati", e)
+        }
+        return dataList
     }
 }

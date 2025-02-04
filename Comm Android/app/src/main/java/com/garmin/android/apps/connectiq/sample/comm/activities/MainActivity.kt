@@ -5,12 +5,15 @@
 package com.garmin.android.apps.connectiq.sample.comm.activities
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.garmin.android.apps.connectiq.sample.comm.DataStream
 import com.garmin.android.apps.connectiq.sample.comm.R
 import com.garmin.android.apps.connectiq.sample.comm.adapter.IQDeviceAdapter
 import com.garmin.android.connectiq.ConnectIQ
@@ -48,7 +51,24 @@ class MainActivity : Activity() {
 
         setupUi()
         setupConnectIQSdk()
+        setupServiceButtons()
     }
+
+    private fun setupServiceButtons() {
+        val startButton = findViewById<Button>(R.id.btnStartService)
+        val stopButton = findViewById<Button>(R.id.btnStopService)
+
+        startButton.setOnClickListener {
+            val intent = Intent(this, DataStream::class.java)
+            startService(intent)
+        }
+
+        stopButton.setOnClickListener {
+            val intent = Intent(this, DataStream::class.java)
+            stopService(intent)
+        }
+    }
+
 
     public override fun onResume() {
         super.onResume()
