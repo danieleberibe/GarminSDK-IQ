@@ -1,74 +1,97 @@
-//
-// Copyright 2016 by Garmin Ltd. or its subsidiaries.
-// Subject to Garmin SDK License Agreement and Wearables
-// Application Developer Agreement.
-//
-
 using Toybox.WatchUi;
 using Toybox.Graphics;
 using Toybox.Communications;
 using Toybox.System;
 
 class CommView extends WatchUi.View {
-    var screenShape;
+  var screenWidth, screenHeight;
+  var page = 0; // 0 = Intro, 1 = Messaggi ricevuti
+  var strings = ["Messaggio 1", "Messaggio 2", "Messaggio 3"]; // Test
+  var hasDirectMessagingSupport = true; // Simulazione supporto
 
-    function initialize() {
-        View.initialize();
+  function initialize() {
+    View.initialize();
+  }
+
+  function onLayout(dc) {
+    screenWidth = dc.getWidth();
+    screenHeight = dc.getHeight();
+  }
+
+  function drawIntroPage(dc) {
+    var centerX = screenWidth / 2;
+    var yOffset = 50;
+
+    dc.drawText(
+      centerX,
+      yOffset,
+      Graphics.FONT_LARGE,
+      "D3A APP",
+      Graphics.TEXT_JUSTIFY_CENTER
+    );
+    dc.drawText(
+      centerX,
+      yOffset + 90,
+      Graphics.FONT_TINY,
+      "Connect your phone",
+      Graphics.TEXT_JUSTIFY_CENTER
+    );
+    dc.drawText(
+      centerX,
+      yOffset + 120,
+      Graphics.FONT_TINY,
+      "to send your data",
+      Graphics.TEXT_JUSTIFY_CENTER
+    );
+  }
+
+  function drawReceivedStrings(dc) {
+    var centerX = screenWidth / 2;
+    var y = 70;
+
+    dc.drawText(
+      centerX,
+      30,
+      Graphics.FONT_LARGE,
+      "Strings Received:",
+      Graphics.TEXT_JUSTIFY_CENTER
+    );
+
+    for (var i = 0; i < strings.size(); i++) {
+      dc.drawText(
+        centerX,
+        y,
+        Graphics.FONT_MEDIUM,
+        strings[i],
+        Graphics.TEXT_JUSTIFY_CENTER
+      );
+      y += 40; // Maggiore spaziatura tra le righe
     }
+  }
 
-    function onLayout(dc) {
-        screenShape = System.getDeviceSettings().screenShape;
+  function onUpdate(dc) {
+    dc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_BLACK);
+    dc.clear();
+    dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+
+    if (hasDirectMessagingSupport) {
+      if (page == 0) {
+        drawIntroPage(dc);
+      } else {
+        drawReceivedStrings(dc);
+      }
+    } else {
+      dc.drawText(
+        screenWidth / 2,
+        screenHeight / 3,
+        Graphics.FONT_LARGE,
+        "Direct Messaging API\nNot Supported",
+        Graphics.TEXT_JUSTIFY_CENTER
+      );
     }
+  }
 
-    function drawIntroPage(dc) {
-        if(System.SCREEN_SHAPE_ROUND == screenShape) {
-            dc.drawText(dc.getWidth() / 2, 25,  Graphics.FONT_SMALL, "Communications", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 55, Graphics.FONT_SMALL, "Test", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 80,  Graphics.FONT_TINY,  "Connect a phone then", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 100,  Graphics.FONT_TINY,  "use the menu to send", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 120,  Graphics.FONT_TINY,  "strings to your phone", Graphics.TEXT_JUSTIFY_CENTER);
-        } else if(System.SCREEN_SHAPE_SEMI_ROUND == screenShape) {
-            dc.drawText(dc.getWidth() / 2, 20,  Graphics.FONT_MEDIUM, "Communications test", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 50,  Graphics.FONT_SMALL,  "Connect a phone", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 70,  Graphics.FONT_SMALL,  "Then use the menu to send", Graphics.TEXT_JUSTIFY_CENTER);
-            dc.drawText(dc.getWidth() / 2, 90,  Graphics.FONT_SMALL,  "strings to your phone", Graphics.TEXT_JUSTIFY_CENTER);
-        } else if(dc.getWidth() > dc.getHeight()) {
-            dc.drawText(10, 20,  Graphics.FONT_MEDIUM, "Communications test", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 50,  Graphics.FONT_SMALL,  "Connect a phone", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 70,  Graphics.FONT_SMALL,  "Then use the menu to send", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 90,  Graphics.FONT_SMALL,  "strings to your phone", Graphics.TEXT_JUSTIFY_LEFT);
-        } else {
-            dc.drawText(10, 20, Graphics.FONT_MEDIUM, "Communications test", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 40, Graphics.FONT_MEDIUM, "Test", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 70, Graphics.FONT_SMALL, "Connect a phone", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 90, Graphics.FONT_SMALL, "Then use the menu", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 110, Graphics.FONT_SMALL, "to send strings", Graphics.TEXT_JUSTIFY_LEFT);
-            dc.drawText(10, 130, Graphics.FONT_SMALL, "to your phone", Graphics.TEXT_JUSTIFY_LEFT);
-        }
-    }
-
-    function onUpdate(dc) {
-        dc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_BLACK);
-        dc.clear();
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-
-        if(hasDirectMessagingSupport) {
-            if(page == 0) {
-                drawIntroPage(dc);
-            } else {
-                var i;
-                var y = 50;
-
-                dc.drawText(dc.getWidth() / 2, 20,  Graphics.FONT_MEDIUM, "Strings Received:", Graphics.TEXT_JUSTIFY_CENTER);
-                for(i = 0; i < stringsSize; i += 1) {
-                    dc.drawText(dc.getWidth() / 2, y,  Graphics.FONT_SMALL, strings[i], Graphics.TEXT_JUSTIFY_CENTER);
-                    y += 20;
-                }
-             }
-         } else {
-             dc.drawText(dc.getWidth() / 2, dc.getHeight() / 3, Graphics.FONT_MEDIUM, "Direct Messaging API\nNot Supported", Graphics.TEXT_JUSTIFY_CENTER);
-         }
-    }
-
-
+  function onTap(x, y) {
+    // Non è più necessario gestire il tocco sulla "X"
+  }
 }

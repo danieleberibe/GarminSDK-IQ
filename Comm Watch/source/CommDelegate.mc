@@ -54,6 +54,36 @@ function sendData() as Void {
         System.println("Steps data not available.");
     }
 
+    // Respiration
+    if (activityMonitor.respirationRate != null) {
+        var respiration = activityMonitor.respirationRate.toString();
+        dataToSend += timestamp + " - Respiration: " + respiration + "\n";
+    } else {
+        System.println("Respiration data not available.");
+    }
+    //Calories
+    if (activityMonitor.calories != null) {
+        var calories = activityMonitor.calories.toString();
+        dataToSend += timestamp + " - Calories: " + calories + "\n";
+    } else {
+        System.println("Calories data not available.");
+    }
+    //Distance
+    if (activityMonitor.distance != null) {
+        var distance = activityMonitor.distance.toString();
+        dataToSend += timestamp + " - Distance: " + distance + "\n";
+    } else {
+        System.println("Distance data not available.");
+    }
+    //Active Minutes Day
+    if (activityMonitor.activeMinutesDay != null) {
+        var activeMinutesDay = activityMonitor.activeMinutesDay.toString();
+        dataToSend += timestamp + " - Active Minutes: " + activeMinutesDay + "\n";
+    } else {
+        System.println("Active Minutes data not available.");
+    }
+
+
     // Invia i dati raccolti, se presenti
     if (dataToSend != "") {
         Communications.transmit(dataToSend, null, listener);
