@@ -5,12 +5,16 @@
 package com.garmin.android.apps.connectiq.sample.comm.activities
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.garmin.android.apps.connectiq.sample.comm.DataStream
@@ -54,20 +58,60 @@ class MainActivity : Activity() {
         setupServiceButtons()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupServiceButtons() {
         val startButton = findViewById<Button>(R.id.btnStartService)
         val stopButton = findViewById<Button>(R.id.btnStopService)
+        val serviceStatus = findViewById<TextView>(R.id.serviceStatus)
 
-        startButton.setOnClickListener {
-            val intent = Intent(this, DataStream::class.java)
-            startService(intent)
+        // Verifica se il servizio è attivo
+        val isServiceRunning = isServiceRunning(DataStream::class.java)
+
+        // Aggiorna UI in base allo stato del servizio
+        if (isServiceRunning) {
+            serviceStatus.text = "Stato: ✅ Attivo"
+            startButton.isEnabled = false
+            stopButton.isEnabled = true
+        } else {
+            serviceStatus.text = "Stato: ❌ Non Attivo"
+            startButton.isEnabled = true
+            stopButton.isEnabled = false
         }
 
+        // Listener per Avviare il servizio
+        startButton.setOnClickListener {
+            val serviceIntent = Intent(this, DataStream::class.java)
+            startForegroundService(serviceIntent)
+
+            serviceStatus.text = "Stato: ✅ Attivo"
+            startButton.isEnabled = false
+            stopButton.isEnabled = true
+        }
+
+        // Listener per Fermare il servizio
         stopButton.setOnClickListener {
-            val intent = Intent(this, DataStream::class.java)
-            stopService(intent)
+            val serviceIntent = Intent(this, DataStream::class.java)
+            stopService(serviceIntent)
+
+            serviceStatus.text = "Stato: ❌ Non Attivo"
+            startButton.isEnabled = true
+            stopButton.isEnabled = false
         }
     }
+
+    /**
+     * Metodo per controllare se il servizio DataStream è attivo
+     */
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
+    }
+
 
 
     public override fun onResume() {
@@ -95,13 +139,15 @@ class MainActivity : Activity() {
     }
 
     private fun setupUi() {
-        // Setup UI.
+        // Trova la RecyclerView con l'ID corretto
+        val recyclerView = findViewById<RecyclerView>(R.id.list) ?: throw NullPointerException("RecyclerView non trovata!")
+
         adapter = IQDeviceAdapter { onItemClick(it) }
-        findViewById<RecyclerView>(android.R.id.list).apply {
-            layoutManager = LinearLayoutManager(this@MainActivity)
-            adapter = this@MainActivity.adapter
-        }
+
+        recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+        recyclerView.adapter = adapter
     }
+
 
     private fun onItemClick(device: IQDevice) {
         startActivity(DeviceActivity.getIntent(this, device))
