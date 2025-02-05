@@ -14,6 +14,9 @@ import com.garmin.android.connectiq.exception.ServiceUnavailableException
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DataStream : Service() {
 
@@ -147,32 +150,62 @@ class DataStream : Service() {
             val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
             val editor = sharedPreferences.edit()
 
-            // Recupera i dati già salvati
             val existingData = sharedPreferences.getString("data_list", "[]") ?: "[]"
-            val jsonArray = JSONArray(existingData)
-
-            // Converte i dati in un JSON valido
-            val jsonObject = try {
-                JSONObject(data)
+            val jsonArray = try {
+                JSONArray(existingData)
             } catch (e: Exception) {
-                Log.e(TAG, "Errore nel parsing del JSON, creando un oggetto manuale: $data")
-                JSONObject().apply {
-                    put("time", System.currentTimeMillis()) // Timestamp
-                    put("steps", data.toIntOrNull() ?: 0) // Prova a convertire in numero
+                JSONArray()
+            }
+
+            // 🔥 Divide il messaggio in righe
+            val lines = data.trim().split("\n")
+
+            var time: String? = null
+            var hr: Int? = null
+            var stress: Int? = null
+            var steps: Int? = null
+
+            for (line in lines) {
+                when {
+                    line.contains("Heart Rate:", ignoreCase = true) ->
+                        hr = line.replace(Regex(".*Heart Rate:\\s*"), "").trim().toIntOrNull()
+
+                    line.contains("Stress Score:", ignoreCase = true) ->
+                        stress = line.replace(Regex(".*Stress Score:\\s*"), "").trim().toIntOrNull()
+
+                    line.contains("Steps:", ignoreCase = true) ->
+                        steps = line.replace(Regex(".*Steps:\\s*"), "").trim().toIntOrNull()
+
+                    // 🕐 Estrai solo l'orario, ignorando il resto della riga
+                    line.matches(Regex("\\d{2}:\\d{2}:\\d{2}.*")) ->
+                        time = line.substring(0, 8) // Prende solo le prime 8 cifre (hh:mm:ss)
                 }
+            }
+
+            // 🔥 Se il valore time è null, usa il timestamp corrente
+            val formattedTime = time ?: SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(
+                Date()
+            )
+
+            val jsonObject = JSONObject().apply {
+                put("time", formattedTime)
+                put("hr", hr ?: 0)
+                put("stress", stress ?: 0)
+                put("steps", steps ?: 0)
             }
 
             jsonArray.put(jsonObject)
 
-            // Salva i dati aggiornati
             editor.putString("data_list", jsonArray.toString())
             editor.apply()
 
-            Log.d(TAG, "✅ Dati salvati su SharedPreferences: $jsonArray")
+            Log.d(TAG, "✅ Dati salvati su SharedPreferences: $jsonObject")
         } catch (e: Exception) {
             Log.e(TAG, "❌ Errore nel salvataggio dei dati", e)
         }
     }
+
+
 
 
 

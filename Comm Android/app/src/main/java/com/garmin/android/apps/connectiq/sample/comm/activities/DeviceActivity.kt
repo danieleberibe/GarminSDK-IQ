@@ -27,8 +27,12 @@ import com.garmin.android.connectiq.IQDevice
 import com.garmin.android.connectiq.exception.InvalidStateException
 import com.garmin.android.connectiq.exception.ServiceUnavailableException
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 private const val TAG = "DeviceActivity"
 private const val EXTRA_IQ_DEVICE = "IQDevice"
@@ -103,18 +107,22 @@ class DeviceActivity : Activity() {
         val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
         val jsonData = sharedPreferences.getString("data_list", "[]") ?: "[]"
 
-        Log.d(TAG, "📥 Dati letti da SharedPreferences: $jsonData")  // ✅ Controlliamo cosa leggiamo
+        Log.d(TAG, "📥 Dati letti da SharedPreferences: $jsonData")
 
         val jsonArray = JSONArray(jsonData)
-        eventsList.clear()  // Pulisce la lista prima di aggiungere nuovi dati
+        eventsList.clear()
 
         for (i in 0 until jsonArray.length()) {
             try {
                 val jsonObject = jsonArray.getJSONObject(i)
-                val time = jsonObject.opt("time")?.toString() ?: "N/A"
-                val steps = jsonObject.optInt("steps", -1)
 
-                eventsList.add("⏱ Ora: $time, 🚶 Steps: $steps")
+                // ✅ Prendiamo i dati correttamente
+                val time = jsonObject.optString("time", "N/A")
+                val steps = jsonObject.optInt("steps", -1)
+                val hr = jsonObject.optInt("hr", -1)
+                val stress = jsonObject.optInt("stress", -1)
+
+                eventsList.add("📅 Data: $time, 🚶 Passi: $steps , ❤️ HR: $hr , 😓 Stress: $stress")
             } catch (e: Exception) {
                 Log.e(TAG, "❌ Errore nella lettura dei dati salvati", e)
             }
@@ -125,6 +133,18 @@ class DeviceActivity : Activity() {
             adapter.notifyDataSetChanged()
         }
     }
+
+
+    private fun convertTimestampToDate(timestamp: Long): String {
+        return try {
+            val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+            val date = Date(timestamp)
+            sdf.format(date)
+        } catch (e: Exception) {
+            "Data non disponibile"
+        }
+    }
+
 
 
     public override fun onResume() {
@@ -222,11 +242,26 @@ class DeviceActivity : Activity() {
                 ConnectIQ.IQApplicationInfoListener {
                 override fun onApplicationInfoReceived(app: IQApp) {
                     if (::recyclerView.isInitialized) {
-                        buildMessageList()
+                        // 🔹 Invece di sostituire l’adapter, aggiorniamo la lista
+                        val newMessages = MessageFactory.getMessages(this@DeviceActivity)
+
+                        // 🔥 Filtra i messaggi di test prima di aggiungerli
+                        val filteredMessages = newMessages.filterNot { msg ->
+                            msg.text.contains("hello", ignoreCase = true) ||
+                                    msg.text.contains("string", ignoreCase = true) ||
+                                    msg.text.contains("array", ignoreCase = true) ||
+                                    msg.text.contains("dictionary", ignoreCase = true) ||
+                                    msg.text.contains("complex", ignoreCase = true)
+                        }
+
+                        eventsList.addAll(filteredMessages.map { it.payload.toString() })
+                        runOnUiThread { adapter.notifyDataSetChanged() }
+
                     } else {
                         Log.e(TAG, "RecyclerView non inizializzata, impossibile aggiornare la lista!")
                     }
                 }
+
 
                 override fun onApplicationNotInstalled(applicationId: String) {
                     // The Comm widget is not installed on the device so we have
@@ -281,14 +316,54 @@ class DeviceActivity : Activity() {
                 JSONArray()
             }
 
-            jsonArray.put(JSONObject(data)) // Aggiungi il nuovo dato
-            file.writeText(jsonArray.toString()) // Sovrascrivi il file con i nuovi dati
+            // 🔥 Controlla se il dato ricevuto è un JSON valido
+            val jsonObject = try {
+                JSONObject(data)  // Se è un JSON valido, lo usa direttamente
+            } catch (e: JSONException) {
+                Log.e(TAG, "⚠️ Il dato ricevuto non è un JSON, parsing manuale: $data")
 
-            Log.d(TAG, "Dati salvati su $fileName")
+                // 🔥 Divide il messaggio in righe e processa ogni riga
+                val lines = data.trim().split("\n")
+
+                var time: String? = null
+                var hr: Int? = null
+                var stress: Int? = null
+                var steps: Int? = null
+
+                for (line in lines) {
+                    when {
+                        line.contains("Heart Rate:", ignoreCase = true) ->
+                            hr = line.replace(Regex(".*Heart Rate:\\s*"), "").trim().toIntOrNull()
+
+                        line.contains("Stress Score:", ignoreCase = true) ->
+                            stress = line.replace(Regex(".*Stress Score:\\s*"), "").trim().toIntOrNull()
+
+                        line.contains("Steps:", ignoreCase = true) ->
+                            steps = line.replace(Regex(".*Steps:\\s*"), "").trim().toIntOrNull()
+
+                        line.matches(Regex("\\d{2}:\\d{2}:\\d{2}.*")) ->
+                            time = line.split(" -")[0].trim()  // Prendi solo l'orario
+                    }
+                }
+
+                // 🔥 Controlla che i valori non siano nulli, altrimenti assegna 0
+                JSONObject().apply {
+                    put("time", time ?: "N/A")
+                    put("hr", hr ?: 0)
+                    put("stress", stress ?: 0)
+                    put("steps", steps ?: 0)
+                }
+            }
+
+            jsonArray.put(jsonObject)
+            file.writeText(jsonArray.toString())
+
+            Log.d(TAG, "✅ Dati salvati su $fileName: $jsonObject")
         } catch (e: Exception) {
-            Log.e(TAG, "Errore nel salvataggio dei dati", e)
+            Log.e(TAG, "❌ Errore nel salvataggio dei dati", e)
         }
     }
+
 
     private fun readDataFromSharedPreferences(): List<String> {
         val dataList = mutableListOf<String>()
