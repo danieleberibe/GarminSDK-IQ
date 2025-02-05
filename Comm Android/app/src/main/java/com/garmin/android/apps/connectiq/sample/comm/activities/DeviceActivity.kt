@@ -216,22 +216,16 @@ class DeviceActivity : Activity() {
             connectIQ.registerForAppEvents(device, myApp) { _, _, message, _ ->
                 if (message.isNotEmpty()) {
                     for (data in message) {
-                        eventsList.add(data.toString()) // Aggiorniamo la lista mostrata
-                        saveDataToFile(data.toString()) // Salviamo i dati su file
+                        Log.d(TAG, "📩 Dati ricevuti live: $data")
+                        saveDataToFile(data.toString())  // 🔥 Salva i dati, ma non li mostra subito nella lista
                     }
-                } else {
-                    eventsList.add("Messaggio vuoto ricevuto.")
-                }
-
-                // Aggiorniamo la UI con i nuovi dati
-                runOnUiThread {
-                    adapter.notifyDataSetChanged()
                 }
             }
         } catch (e: InvalidStateException) {
             Toast.makeText(this, "ConnectIQ non è in uno stato valido", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
 

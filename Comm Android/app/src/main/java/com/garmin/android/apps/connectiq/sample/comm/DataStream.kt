@@ -30,7 +30,8 @@ class DataStream : Service() {
         Log.d(TAG, "Servizio DataStream creato")
 
         createNotificationChannel()
-        startForeground(1, createNotification())
+        val notification = createNotification()
+        startForeground(1, notification)
 
         setupGarminConnection()
     }
@@ -124,12 +125,17 @@ class DataStream : Service() {
             val channel = NotificationChannel(
                 "DataStreamChannel",
                 "Data Stream Service",
-                NotificationManager.IMPORTANCE_LOW
-            )
+                NotificationManager.IMPORTANCE_HIGH  // 🔥 Usa HIGH per renderla visibile
+            ).apply {
+                description = "Monitora i dati del dispositivo Garmin"
+                setShowBadge(true)
+            }
+
             val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            manager?.createNotificationChannel(channel)
         }
     }
+
 
     private fun createNotification(): Notification {
         val notificationIntent = Intent(this, com.garmin.android.apps.connectiq.sample.comm.activities.MainActivity::class.java)
@@ -138,12 +144,15 @@ class DataStream : Service() {
         )
 
         return NotificationCompat.Builder(this, "DataStreamChannel")
-            .setContentTitle("Data Stream attivo")
-            .setContentText("Monitoraggio dati da Garmin...")
-            .setSmallIcon(android.R.drawable.stat_sys_download)
+            .setContentTitle("D3A - Data Stream Attivo")
+            .setContentText("Monitoraggio in corso dei dati Garmin...")
+            .setSmallIcon(android.R.drawable.star_big_on)
             .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)  // 🔥 Mostra sempre la notifica
+            .setOngoing(true)  // 🔥 Impedisce che venga rimossa con uno swipe
             .build()
     }
+
 
     private fun saveDataToSharedPreferences(data: String) {
         try {
