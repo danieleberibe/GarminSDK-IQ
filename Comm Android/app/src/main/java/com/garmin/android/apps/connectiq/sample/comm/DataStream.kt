@@ -63,7 +63,14 @@ class DataStream : Service() {
 
     private fun sendDataToBackend() {
         val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
+        val authPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
         val jsonData = sharedPreferences.getString("data_list", "[]") ?: "[]"
+        val jwtToken = authPreferences.getString("jwt", null)
+
+        if (jwtToken.isNullOrEmpty()) {
+            Log.e(TAG, "❌ Nessun token JWT trovato. Interrompo l'invio.")
+            return
+        }
 
         if (jsonData == "[]" || jsonData.isEmpty()) {
             Log.d(TAG, "📭 Nessun dato da inviare al backend.")
@@ -72,16 +79,37 @@ class DataStream : Service() {
 
         try {
             val jsonArray = JSONArray(jsonData)
-            val jsonPayload = JSONObject().apply {
-                put("data", jsonArray) // ✅ Formato corretto richiesto dal backend
+            val formattedArray = JSONArray()
+
+            for (i in 0 until jsonArray.length()) {
+                val item = jsonArray.getJSONObject(i)
+                val timestamp = item.optString("timestamp", getCurrentTimestamp())
+                val dataObject = item.optJSONObject("data") ?: JSONObject()
+
+                val formattedObject = JSONObject().apply {
+                    put("timestamp", timestamp)
+                    put("data", dataObject)
+                }
+
+                formattedArray.put(formattedObject)
             }
 
-            val requestBody = RequestBody.create("application/json; charset=utf-8".toMediaType(), jsonPayload.toString())
+            val requestBody = RequestBody.create(
+                "application/json; charset=utf-8".toMediaType(),
+                formattedArray.toString()
+            )
 
             val request = Request.Builder()
-                .url("https://54b93b24e2b0.ngrok.app/rest/garmin/data") // 🔥 Sostituisci con il tuo endpoint API
+                .url("https://d3a.atlantica.it/api/cognitive-monitoring/v2/devicedata/saveAll")
+                .addHeader("x-auth-token", " $jwtToken")
                 .post(requestBody)
                 .build()
+
+            // ✅ LOG della richiesta per il debug
+            Log.d(TAG, "📤 REQUEST:")
+            Log.d(TAG, "URL: ${request.url}")
+            Log.d(TAG, "HEADERS: ${request.headers}")
+            Log.d(TAG, "BODY: ${formattedArray.toString(2)}") // Formattato per leggibilità
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -91,11 +119,10 @@ class DataStream : Service() {
                 override fun onResponse(call: Call, response: Response) {
                     if (response.isSuccessful) {
                         Log.d(TAG, "✅ Dati inviati con successo!")
-
-                        // 🔥 Svuota la memoria solo dopo un invio riuscito
                         clearStoredData()
                     } else {
-                        Log.e(TAG, "❌ Errore nella risposta del server: ${response.code}")
+                        Log.e(TAG, "❌ Errore nella risposta del server: ${response.code} - ${response.message}")
+                        Log.e(TAG, "❌ RESPONSE BODY: ${response.body?.string()}") // ✅ Risposta del server
                     }
                 }
             })
@@ -103,6 +130,14 @@ class DataStream : Service() {
             Log.e(TAG, "❌ Errore nell'invio dei dati al backend", e)
         }
     }
+
+
+    private fun getCurrentTimestamp(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        return sdf.format(Date())
+    }
+
 
     private fun clearStoredData() {
         val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
@@ -170,9 +205,12 @@ class DataStream : Service() {
                 JSONArray()
             }
 
+            // 🔄 Converte la stringa ricevuta in un JSON strutturato
+            val dataMap = parseDataString(data)
+
             val jsonObject = JSONObject().apply {
-                put("time", SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date()))
-                put("data", data)  // 🔥 Salviamo i dati come JSON
+                put("timestamp", getCurrentTimestamp()) // Timestamp ISO 8601
+                put("data", JSONObject(dataMap))        // Inserisci i dati come oggetto JSON
             }
 
             jsonArray.put(jsonObject)
@@ -185,6 +223,36 @@ class DataStream : Service() {
             Log.e(TAG, "❌ Errore nel salvataggio dei dati", e)
         }
     }
+
+    private fun parseDataString(data: String): Map<String, Int> {
+        val dataMap = mutableMapOf<String, Int>()
+        val lines = data.split("\n")  // Divide la stringa su ogni nuova riga
+
+        for (line in lines) {
+            val regex = Regex("""- (.*?): (\d+)""")  // Cerca pattern come "- Heart Rate: 77"
+            val matchResult = regex.find(line)
+
+            matchResult?.let {
+                val key = it.groupValues[1].trim()    // Estrae "Heart Rate", "Stress Score", "Steps"
+                val value = it.groupValues[2].toInt() // Estrae il valore numerico come intero
+
+                // Mappatura delle chiavi
+                val mappedKey = when (key) {
+                    "Heart Rate" -> "hr_garmin"
+                    "Stress Score" -> "stress_garmin"
+                    "Steps" -> "steps_garmin"
+                    else -> key // In caso ci siano altri dati non previsti
+                }
+
+                dataMap[mappedKey] = value
+            }
+        }
+        return dataMap
+    }
+
+
+
+
 
     private fun loadDevices() {
         try {

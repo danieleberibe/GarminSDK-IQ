@@ -14,6 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,9 +50,20 @@ class MainActivity : Activity() {
             }
         }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val sharedPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
+        val jwt = sharedPreferences.getString("jwt", null)
+        val refreshToken = sharedPreferences.getString("refreshToken", null)
+
+        if (jwt != null) {
+            Toast.makeText(this, "JWT salvato: $jwt", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "Nessun JWT trovato!", Toast.LENGTH_LONG).show()
+        }
 
         setupUi()
         setupConnectIQSdk()
