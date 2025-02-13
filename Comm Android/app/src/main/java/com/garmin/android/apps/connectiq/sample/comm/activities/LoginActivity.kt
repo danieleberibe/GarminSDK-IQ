@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import android.app.Activity
+import com.garmin.android.apps.connectiq.sample.comm.ApiService
 import com.garmin.android.apps.connectiq.sample.comm.R
 import com.garmin.android.apps.connectiq.sample.comm.models.LoginRequest
 import com.garmin.android.apps.connectiq.sample.comm.models.LoginResponse
@@ -40,19 +41,22 @@ class LoginActivity : Activity() {
     }
 
     private fun performLogin(email: String, password: String) {
-        val call = RetrofitClient.instance.login(LoginRequest(email, password))
+        val retrofit = RetrofitClient.getInstance(this)  // 👈 Usa getInstance() per ottenere Retrofit
+        val apiService = retrofit.create(ApiService::class.java)
+
+        val call = apiService.login(LoginRequest(email, password))
         call.enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     loginResponse?.let {
-                        // Salva il JWT e il refreshToken
+                        // ✅ Salva il JWT e il refreshToken
                         saveTokens(it.jwt, it.refreshToken)
 
-                        // Vai alla MainActivity
+                        // ✅ Vai alla MainActivity
                         val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
-                        finish()  // Importante per non tornare indietro con il tasto "Back"
+                        finish()
                     }
                 } else {
                     Toast.makeText(applicationContext, "Credenziali non valide", Toast.LENGTH_SHORT).show()
@@ -65,6 +69,7 @@ class LoginActivity : Activity() {
         })
     }
 
+
     private fun saveTokens(jwt: String, refreshToken: String?) {
         val sharedPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
         with(sharedPreferences.edit()) {
@@ -72,6 +77,9 @@ class LoginActivity : Activity() {
             putString("refreshToken", refreshToken)
             apply()  // Importante per assicurare il salvataggio
         }
+        // ✅ LOG per verificare che il token venga salvato
+        Log.d("LoginActivity", "🔑 JWT Salvato: $jwt")
+        Log.d("LoginActivity", "🔄 Refresh Token Salvato: ${refreshToken ?: "Nessun refresh token ricevuto"}")
     }
 
     private fun isUserLoggedIn(): Boolean {

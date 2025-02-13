@@ -29,6 +29,23 @@ class DataStream : Service() {
     private val timer = Timer()
     private val client = OkHttpClient()
 
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "🔄 DataStream Service riavviato")
+
+        // Assicuriamoci che il servizio parta in foreground
+        startForeground(1, createNotification())
+
+        // Se il timer non è attivo, lo riavviamo
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                sendDataToBackend()
+            }
+        }, 0, TimeUnit.MINUTES.toMillis(1)) // Ogni minuto
+
+        return START_STICKY  // ✅ Dice ad Android di riavviare il servizio se viene killato
+    }
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Servizio DataStream creato")
@@ -65,7 +82,8 @@ class DataStream : Service() {
         val sharedPreferences = getSharedPreferences("GarminData", MODE_PRIVATE)
         val authPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
         val jsonData = sharedPreferences.getString("data_list", "[]") ?: "[]"
-        val jwtToken = authPreferences.getString("jwt", null)
+        var jwtToken = authPreferences.getString("jwt", null)
+        val refreshToken = authPreferences.getString("refreshToken", null)
 
         if (jwtToken.isNullOrEmpty()) {
             Log.e(TAG, "❌ Nessun token JWT trovato. Interrompo l'invio.")
@@ -100,16 +118,10 @@ class DataStream : Service() {
             )
 
             val request = Request.Builder()
-                .url("https://d3a.atlantica.it/api/cognitive-monitoring/v2/devicedata/saveAll")
+                .url("https://d3a-dev.atlantica.it/api/cognitive-monitoring/v2/devicedata/saveAll")
                 .addHeader("x-auth-token", " $jwtToken")
                 .post(requestBody)
                 .build()
-
-            // ✅ LOG della richiesta per il debug
-            Log.d(TAG, "📤 REQUEST:")
-            Log.d(TAG, "URL: ${request.url}")
-            Log.d(TAG, "HEADERS: ${request.headers}")
-            Log.d(TAG, "BODY: ${formattedArray.toString(2)}") // Formattato per leggibilità
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -120,15 +132,69 @@ class DataStream : Service() {
                     if (response.isSuccessful) {
                         Log.d(TAG, "✅ Dati inviati con successo!")
                         clearStoredData()
+                    } else if (response.code == 401 && refreshToken != null) {
+                        Log.e(TAG, "❌ Token scaduto, tentativo di refresh token...")
+                        refreshAccessToken(refreshToken) { newToken ->
+                            if (newToken != null) {
+                                // Riprova l'invio con il nuovo token
+                                sendDataToBackend()
+                            } else {
+                                Log.e(TAG, "❌ Errore nel refresh token. L'utente deve rifare il login.")
+                            }
+                        }
                     } else {
                         Log.e(TAG, "❌ Errore nella risposta del server: ${response.code} - ${response.message}")
-                        Log.e(TAG, "❌ RESPONSE BODY: ${response.body?.string()}") // ✅ Risposta del server
+                        Log.e(TAG, "❌ RESPONSE BODY: ${response.body?.string()}")
                     }
                 }
             })
         } catch (e: Exception) {
             Log.e(TAG, "❌ Errore nell'invio dei dati al backend", e)
         }
+    }
+
+
+    private fun refreshAccessToken(refreshToken: String, callback: (String?) -> Unit) {
+        val refreshUrl = "https://d3a-dev.atlantica.it/api/v2/authenticate/refreshtoken/$refreshToken"
+
+        val request = Request.Builder()
+            .url(refreshUrl)
+            .get()
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e(TAG, "❌ Errore nel refresh token: ${e.message}")
+                callback(null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body?.string()
+                    Log.d(TAG, "🔄 Token aggiornato: $responseBody")
+
+                    try {
+                        val json = JSONObject(responseBody ?: "")
+                        val newJwt = json.getString("jwt")
+
+                        // ✅ Salva il nuovo token
+                        val authPreferences = getSharedPreferences("AuthPrefs", MODE_PRIVATE)
+                        with(authPreferences.edit()) {
+                            putString("jwt", newJwt)
+                            apply()
+                        }
+
+                        callback(newJwt)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "❌ Errore nel parsing del nuovo token", e)
+                        callback(null)
+                    }
+                } else {
+                    Log.e(TAG, "❌ Errore nel refresh token: ${response.code} - ${response.message}")
+                    callback(null)
+                }
+            }
+        })
     }
 
 
