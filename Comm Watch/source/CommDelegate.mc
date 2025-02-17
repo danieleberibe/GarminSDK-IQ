@@ -83,6 +83,22 @@ function sendData() as Void {
         System.println("Active Minutes data not available.");
     }
 
+    //Spo 2
+    if (sensor.oxygenSaturation != null) {
+        var spo2 = sensor.oxygenSaturation.toString();
+        dataToSend += timestamp + " - Spo2: " + spo2 + "\n";
+    } else {
+        System.println("Spo2 data not available.");
+    }
+
+    //temperature
+    if (sensor.temperature != null) {
+        var temperature = sensor.temperature.toString();
+        dataToSend += timestamp + " - Temperature: " + temperature + "\n";
+    } else {
+        System.println("Temperature data not available.");
+    }
+
 
     // Invia i dati raccolti, se presenti
     if (dataToSend != "") {
